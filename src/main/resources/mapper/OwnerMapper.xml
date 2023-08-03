@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.vlgu.mapper.OwnerMapper">
+
+    <!--List<Owner> getAllOwner();-->
+    <!--<select id="getAllOwner" resultType="com.vlgu.bean.Owner">
+        select * from owner
+    </select>-->
+    <select id="getAllOwner" resultMap="allOwnerAndCarResultMap">
+        SELECT * FROM owner
+        LEFT JOIN car
+        ON owner.owner_id = car.owner_id
+    </select>
+    <resultMap id="allOwnerAndCarResultMap" type="com.vlgu.bean.Owner">
+        <id column="owner_id" property="ownerId"></id>
+        <result column="surname" property="surname"></result>
+        <result column="first_name" property="firstName"></result>
+        <result column="birthday" property="birthday"></result>
+        <collection property="cars" ofType="com.vlgu.bean.Car">
+            <id column="car_id" property="carId"></id>
+            <result column="number" property="number"></result>
+            <result column="year_of_release" property="yearOfRelease"></result>
+            <result column="brand" property="brand"></result>
+            <result column="model" property="model"></result>
+        </collection>
+    </resultMap>
+
+    <!--Owner getOwnerById(@Param("id") Integer id);-->
+    <!--<select id="getOwnerById" resultType="com.vlgu.bean.Owner">
+        select * from owner where id=#{id}
+    </select>-->
+    <select id="getOwnerById" resultMap="ownerAndCarResultMap">
+        SELECT * FROM owner
+        LEFT JOIN car
+        ON owner.owner_id = car.owner_id
+        WHERE owner.owner_id = #{ownerId}
+    </select>
+    <resultMap id="ownerAndCarResultMap" type="com.vlgu.bean.Owner">
+        <id column="owner_id" property="ownerId"></id>
+        <result column="surname" property="surname"></result>
+        <result column="first_name" property="firstName"></result>
+        <result column="birthday" property="birthday"></result>
+        <collection property="cars" ofType="com.vlgu.bean.Car">
+            <id column="car_id" property="carId"></id>
+            <result column="number" property="number"></result>
+            <result column="year_of_release" property="yearOfRelease"></result>
+            <result column="brand" property="brand"></result>
+            <result column="model" property="model"></result>
+        </collection>
+    </resultMap>
+
+    <!--int removeOwnerById(Integer id);-->
+    <delete id="removeOwnerById">
+        delete from owner where owner_id = #{id}
+    </delete>
+
+    <!--int saveOwner(Owner owner);-->
+    <insert id="saveOwner" parameterType="com.vlgu.bean.Owner" >
+        insert into owner (owner_id, surname, first_name,birthday)
+        values (#{ownerId,jdbcType=INTEGER}, #{surname,jdbcType=VARCHAR},
+        #{firstName,jdbcType=VARCHAR},#{birthday,jdbcType=VARCHAR})
+    </insert>
+
+    <!--int updateOwner(Owner owner);-->
+    <update id="updateOwner" parameterType="com.vlgu.bean.Owner" >
+        update owner
+        <set >
+            <if test="surname != null" >
+                surname = #{surname,jdbcType=VARCHAR},
+            </if>
+            <if test="firstName != null" >
+                first_name = #{firstName,jdbcType=VARCHAR},
+            </if>
+            <if test="birthday != null" >
+                birthday = #{birthday,jdbcType=CHAR},
+            </if>
+        </set>
+        where owner_id = #{ownerId,jdbcType=INTEGER}
+    </update>
+
+</mapper>
